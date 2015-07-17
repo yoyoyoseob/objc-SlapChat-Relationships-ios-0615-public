@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Message.h"
+#import "Message+Methods.h"
+#import "Recipient.h"
 
 @interface FISDataStore : NSObject
 
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (strong, nonatomic) NSArray *messages;
+@property (strong, nonatomic) NSArray *recipients;
 
 + (instancetype) sharedDataStore;
 

@@ -7,9 +7,11 @@
 //
 
 #import "FISTableViewController.h"
-#import "Message.h"
+#import "Recipient.h"
+#import "FISMessagesTableViewController.h"
 
 @interface FISTableViewController ()
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -24,14 +26,11 @@
     return self;
 }
 
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
     self.store = [FISDataStore sharedDataStore];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -59,7 +58,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.store.messages count];
+    return [self.store.recipients count];
 }
 
 
@@ -67,12 +66,9 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"basiccell" forIndexPath:indexPath];
     
-    Message *eachMessage = self.store.messages[indexPath.row];
+    Recipient *placeholderRecipient = self.store.recipients[indexPath.row];
     
-    cell.textLabel.text = eachMessage.content;
-    
-    // Configure the cell...
-    
+    cell.textLabel.text = placeholderRecipient.name;
     return cell;
 }
 
@@ -115,15 +111,21 @@
 }
 */
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    FISMessagesTableViewController *destination = segue.destinationViewController;
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+    Recipient *selectedRecipient = self.store.recipients[indexPath.row];
+    
+    NSSortDescriptor *createdAtSorter = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];
+    
+    // sortedArrayUsingDescriptors requires NSArray
+    destination.messagesArray = [[selectedRecipient.messages allObjects] sortedArrayUsingDescriptors:@[createdAtSorter]];
 }
-*/
+
 
 @end

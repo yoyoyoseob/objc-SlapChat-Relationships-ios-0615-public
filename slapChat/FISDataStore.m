@@ -7,7 +7,6 @@
 //
 
 #import "FISDataStore.h"
-#import "Message.h"
 
 @implementation FISDataStore
 @synthesize managedObjectContext = _managedObjectContext;
@@ -62,14 +61,14 @@
 
 - (void)fetchData
 {
-    NSFetchRequest *messagesRequest = [NSFetchRequest fetchRequestWithEntityName:@"Message"];
+    NSFetchRequest *recipientsRequest = [NSFetchRequest fetchRequestWithEntityName:@"Recipient"];
 
-    NSSortDescriptor *createdAtSorter = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];
-    messagesRequest.sortDescriptors = @[createdAtSorter];
+//    NSSortDescriptor *createdAtSorter = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];
+//    messagesRequest.sortDescriptors = @[createdAtSorter];
 
-    self.messages = [self.managedObjectContext executeFetchRequest:messagesRequest error:nil];
+    self.recipients = [self.managedObjectContext executeFetchRequest:recipientsRequest error:nil];
 
-    if ([self.messages count]==0) {
+    if ([self.recipients count]==0) {
         [self generateTestData];
     }
 }
@@ -92,19 +91,49 @@
 
 - (void)generateTestData
 {
+    Recipient *personOne = [NSEntityDescription insertNewObjectForEntityForName:@"Recipient" inManagedObjectContext:self.managedObjectContext];
+    personOne.name = @"Person One";
+    personOne.email = @"bogus@gmail.com";
+    personOne.phoneNumber = @"1234567890";
+    
     Message *messageOne = [NSEntityDescription insertNewObjectForEntityForName:@"Message" inManagedObjectContext:self.managedObjectContext];
     
     messageOne.content = @"Message 1";
     messageOne.createdAt = [NSDate date];
     
+    [personOne addMessagesObject:messageOne];
+    
+    
+    
+    Recipient *personTwo = [NSEntityDescription insertNewObjectForEntityForName:@"Recipient" inManagedObjectContext:self.managedObjectContext];
+    personTwo.name = @"Person Two";
+    personTwo.email  = @"false@gmail.com";
+    personTwo.phoneNumber = @"0987654321";
+    
     Message *messageTwo = [NSEntityDescription insertNewObjectForEntityForName:@"Message" inManagedObjectContext:self.managedObjectContext];
     messageTwo.content = @"Message 2";
     messageTwo.createdAt = [NSDate date];
+    
+    Message *messageFour = [NSEntityDescription insertNewObjectForEntityForName:@"Message" inManagedObjectContext:self.managedObjectContext];
+    messageFour.content = @"Message 4";
+    messageFour.createdAt = [NSDate date];
+    
+    [personTwo addMessagesObject:messageTwo];
+    [personTwo addMessagesObject:messageFour];
+    
+    
+    
+    Recipient *personThree = [NSEntityDescription insertNewObjectForEntityForName:@"Recipient" inManagedObjectContext:self.managedObjectContext];
+    personThree.name = @"Person Three";
+    personThree.email = @"real@gmail.com";
+    personThree.phoneNumber = @"8452958491";
     
     Message *messageThree = [NSEntityDescription insertNewObjectForEntityForName:@"Message" inManagedObjectContext:self.managedObjectContext];
     
     messageThree.content = @"Message 3";
     messageThree.createdAt = [NSDate date];
+    
+    [personThree addMessagesObject:messageThree];
     
     [self saveContext];
     [self fetchData];
